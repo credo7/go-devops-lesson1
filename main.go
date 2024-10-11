@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"os/signal"
@@ -74,7 +75,7 @@ func checkMetrics(url string, failuresCount *int) error {
 
 	networkBandwidthUsagePercentage := calculatePercentage(m.NetworkLoadBytesPerSecond, m.NetworkBandwidthBytesPerSecond)
 	if networkBandwidthUsagePercentage > 90 {
-		leftNetworkBandwidthMb := float64(m.NetworkBandwidthBytesPerSecond-m.NetworkLoadBytesPerSecond) / (1024 * 1024)
+		leftNetworkBandwidthMb := float64(m.NetworkBandwidthBytesPerSecond-m.NetworkLoadBytesPerSecond) / (1024 * 1024) * 8
 		fmt.Printf("Network bandwidth usage high: %v Mbit/s available\n", leftNetworkBandwidthMb)
 	}
 
@@ -141,9 +142,9 @@ func parseMetrics(values []string, m *Metrics) error {
 	return nil
 }
 
-func calculatePercentage(used, total int) float64 {
+func calculatePercentage(used, total int) int {
 	if total == 0 {
 		return 0
 	}
-	return float64(used) / float64(total) * 100
+	return int(math.Floor(float64(used) / float64(total) * 100))
 }
