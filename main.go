@@ -46,6 +46,7 @@ func main() {
 func checkMetrics(url string, failuresCount *int) error {
 	m, err := getMetrics(url)
 	if err != nil {
+		fmt.Println(err.Error())
 		*failuresCount++
 		if *failuresCount >= 3 {
 			fmt.Printf("Unable to fetch server statistic\n")
