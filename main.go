@@ -1,10 +1,8 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -40,7 +38,6 @@ func main() {
 		case <-ticker.C:
 			_ = checkMetrics(url, &failuresCount)
 		case <-quit:
-			log.Println("Shutting down...")
 			return
 		}
 	}
@@ -51,7 +48,7 @@ func checkMetrics(url string, failuresCount *int) error {
 	if err != nil {
 		*failuresCount++
 		if *failuresCount >= 3 {
-			log.Println("Unable to fetch server statistic")
+			fmt.Printf("Unable to fetch server statistic\n")
 		}
 		return err
 	}
@@ -59,24 +56,24 @@ func checkMetrics(url string, failuresCount *int) error {
 	*failuresCount = 0
 
 	if m.LoadAverage > 30 {
-		log.Printf("Load Average is too high: %v", m.LoadAverage)
+		fmt.Printf("Load Average is too high: %v\n", m.LoadAverage)
 	}
 
 	ramUsagePercentage := calculatePercentage(m.RamUsageBytes, m.RamTotalBytes)
 	if ramUsagePercentage > 80 {
-		log.Printf("Memory usage too high: %.2f%%", ramUsagePercentage)
+		fmt.Printf("Memory usage too high: %.2f%%\n", ramUsagePercentage)
 	}
 
 	diskUsagePercentage := calculatePercentage(m.DiskUsageBytes, m.DiskTotalBytes)
 	if diskUsagePercentage > 90 {
 		leftDiskMemoryMB := (m.DiskTotalBytes - m.DiskUsageBytes) / (1024 * 1024)
-		log.Printf("Free disk space is too low: %v MB left", leftDiskMemoryMB)
+		fmt.Printf("Free disk space is too low: %v MB left\n", leftDiskMemoryMB)
 	}
 
 	networkBandwidthUsagePercentage := calculatePercentage(m.NetworkLoadBytesPerSecond, m.NetworkBandwidthBytesPerSecond)
 	if networkBandwidthUsagePercentage > 90 {
 		leftNetworkBandwidthMb := (m.NetworkBandwidthBytesPerSecond - m.NetworkLoadBytesPerSecond) / (1024 * 1024) * 8
-		log.Printf("Network bandwidth usage high: %.2f Mbit/s available", leftNetworkBandwidthMb)
+		fmt.Printf("Network bandwidth usage high: %.2f Mbit/s available\n", leftNetworkBandwidthMb)
 	}
 
 	return nil
@@ -91,9 +88,9 @@ func getMetrics(url string) (Metrics, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.Header.Get("Content-Type") != "text/plain" {
-		return m, errors.New("Content-Type mismatch")
-	}
+	//if resp.Header.Get("Content-Type") != "text/plain" {
+	//	return m, errors.New("Content-Type mismatch")
+	//}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
