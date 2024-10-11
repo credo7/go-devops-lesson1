@@ -74,7 +74,7 @@ func checkMetrics(url string, failuresCount *int) error {
 
 	networkBandwidthUsagePercentage := calculatePercentage(m.NetworkLoadBytesPerSecond, m.NetworkBandwidthBytesPerSecond)
 	if networkBandwidthUsagePercentage > 90 {
-		leftNetworkBandwidthMb := (m.NetworkBandwidthBytesPerSecond - m.NetworkLoadBytesPerSecond) / (1024 * 1024)
+		leftNetworkBandwidthMb := float64(m.NetworkBandwidthBytesPerSecond-m.NetworkLoadBytesPerSecond) / (1024 * 1024)
 		fmt.Printf("Network bandwidth usage high: %v Mbit/s available\n", leftNetworkBandwidthMb)
 	}
 
