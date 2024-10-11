@@ -95,19 +95,14 @@ func getMetrics(url string) (Metrics, error) {
 	//}
 
 	reader := bufio.NewReader(resp.Body)
-	buffer := make([]byte, 1024) // 1 KB buffer
+	buffer := make([]byte, 1024)
 
-	for {
-		n, err := reader.Read(buffer)
-		if err != nil && err != io.EOF {
-			return m, fmt.Errorf("error reading")
-		}
-		if n == 0 {
-			break // End of response body
-		}
+	n, err := reader.Read(buffer)
+	if err != nil && err != io.EOF {
+		return m, fmt.Errorf("error reading")
 	}
 
-	values := strings.Split(string(buffer), ",")
+	values := strings.Split(string(buffer[:n]), ",")
 	if len(values) != 7 {
 		return m, fmt.Errorf("unexpected number of metrics: expected 7, got %d", len(values))
 	}
