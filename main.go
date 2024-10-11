@@ -63,18 +63,18 @@ func checkMetrics(url string, failuresCount *int) error {
 
 	ramUsagePercentage := calculatePercentage(m.RAMUsageBytes, m.RAMTotalBytes)
 	if ramUsagePercentage > 80 {
-		fmt.Printf("Memory usage too high: %.2f%%\n", ramUsagePercentage)
+		fmt.Printf("Memory usage too high: %.0f%%\n", ramUsagePercentage)
 	}
 
 	diskUsagePercentage := calculatePercentage(m.DiskUsageBytes, m.DiskTotalBytes)
 	if diskUsagePercentage > 90 {
 		leftDiskMemoryMB := (m.DiskTotalBytes - m.DiskUsageBytes) / (1024 * 1024)
-		fmt.Printf("Free disk space is too low: %v MB left\n", leftDiskMemoryMB)
+		fmt.Printf("Free disk space is too low: %v Mb left\n", leftDiskMemoryMB)
 	}
 
 	networkBandwidthUsagePercentage := calculatePercentage(m.NetworkLoadBytesPerSecond, m.NetworkBandwidthBytesPerSecond)
 	if networkBandwidthUsagePercentage > 90 {
-		leftNetworkBandwidthMb := (m.NetworkBandwidthBytesPerSecond - m.NetworkLoadBytesPerSecond) / (1024 * 1024) * 8
+		leftNetworkBandwidthMb := (m.NetworkBandwidthBytesPerSecond - m.NetworkLoadBytesPerSecond) / (1024 * 1024)
 		fmt.Printf("Network bandwidth usage high: %v Mbit/s available\n", leftNetworkBandwidthMb)
 	}
 
