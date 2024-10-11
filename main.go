@@ -14,8 +14,8 @@ import (
 
 type Metrics struct {
 	LoadAverage                    int
-	RamTotalBytes                  int
-	RamUsageBytes                  int
+	RAMTotalBytes                  int
+	RAMUsageBytes                  int
 	DiskTotalBytes                 int
 	DiskUsageBytes                 int
 	NetworkBandwidthBytesPerSecond int
@@ -60,7 +60,7 @@ func checkMetrics(url string, failuresCount *int) error {
 		fmt.Printf("Load Average is too high: %v\n", m.LoadAverage)
 	}
 
-	ramUsagePercentage := calculatePercentage(m.RamUsageBytes, m.RamTotalBytes)
+	ramUsagePercentage := calculatePercentage(m.RAMUsageBytes, m.RAMTotalBytes)
 	if ramUsagePercentage > 80 {
 		fmt.Printf("Memory usage too high: %.2f%%\n", ramUsagePercentage)
 	}
@@ -74,7 +74,7 @@ func checkMetrics(url string, failuresCount *int) error {
 	networkBandwidthUsagePercentage := calculatePercentage(m.NetworkLoadBytesPerSecond, m.NetworkBandwidthBytesPerSecond)
 	if networkBandwidthUsagePercentage > 90 {
 		leftNetworkBandwidthMb := (m.NetworkBandwidthBytesPerSecond - m.NetworkLoadBytesPerSecond) / (1024 * 1024) * 8
-		fmt.Printf("Network bandwidth usage high: %.2f Mbit/s available\n", leftNetworkBandwidthMb)
+		fmt.Printf("Network bandwidth usage high: %v Mbit/s available\n", leftNetworkBandwidthMb)
 	}
 
 	return nil
@@ -116,10 +116,10 @@ func parseMetrics(values []string, m *Metrics) error {
 	if m.LoadAverage, err = strconv.Atoi(values[0]); err != nil {
 		return fmt.Errorf("LoadAverage parsing error: %w", err)
 	}
-	if m.RamTotalBytes, err = strconv.Atoi(values[1]); err != nil {
+	if m.RAMTotalBytes, err = strconv.Atoi(values[1]); err != nil {
 		return fmt.Errorf("RamTotalBytes parsing error: %w", err)
 	}
-	if m.RamUsageBytes, err = strconv.Atoi(values[2]); err != nil {
+	if m.RAMUsageBytes, err = strconv.Atoi(values[2]); err != nil {
 		return fmt.Errorf("RamUsageBytes parsing error: %w", err)
 	}
 	if m.DiskTotalBytes, err = strconv.Atoi(values[3]); err != nil {
