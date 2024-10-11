@@ -98,7 +98,8 @@ func getMetrics(url string) (Metrics, error) {
 		return m, fmt.Errorf("error reading response body: %w", err)
 	}
 
-	values := strings.Fields(string(body))
+	println(string(body))
+	values := strings.Split(string(body), " ")
 	if len(values) != 7 {
 		return m, fmt.Errorf("unexpected number of metrics: expected 7, got %d", len(values))
 	}
