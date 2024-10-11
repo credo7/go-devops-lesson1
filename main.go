@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
@@ -93,12 +94,20 @@ func getMetrics(url string) (Metrics, error) {
 	//	return m, errors.New("Content-Type mismatch")
 	//}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return m, fmt.Errorf("error reading response body: %w", err)
+	reader := bufio.NewReader(resp.Body)
+	buffer := make([]byte, 1024) // 1 KB buffer
+
+	for {
+		n, err := reader.Read(buffer)
+		if err != nil && err != io.EOF {
+			return m, fmt.Errorf("error reading")
+		}
+		if n == 0 {
+			break // End of response body
+		}
 	}
 
-	values := strings.Split(string(body), ",")
+	values := strings.Split(string(buffer), ",")
 	if len(values) != 7 {
 		return m, fmt.Errorf("unexpected number of metrics: expected 7, got %d", len(values))
 	}
