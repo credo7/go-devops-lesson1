@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -93,7 +93,7 @@ func getMetrics(url string) (Metrics, error) {
 	//	return m, errors.New("Content-Type mismatch")
 	//}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return m, fmt.Errorf("error reading response body: %w", err)
 	}
